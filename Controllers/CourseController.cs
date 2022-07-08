@@ -88,7 +88,7 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                         List<Course> noDuplicateRecord = new List<Course>();
                         requestDto.Courses.ForEach(c =>
                         { 
-                            var checkRes =   ctx.Courses.Where(w => w.CourseId == c.CourseId /*|| w.CourseId.ToLower().Equals(c.CourseId.ToLower())*/).FirstOrDefault();
+                            var checkRes =   ctx.Courses.Where(w => w.id == c.CourseId /*|| w.CourseId.ToLower().Equals(c.CourseId.ToLower())*/).FirstOrDefault();
                             if (checkRes != null) //count the number of record(s) that already exists in the db
                             {
                                 countDuplicate += 1; 
@@ -98,8 +98,8 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                                 //create a new Course Model to store the ones that are not duplicated
                                 noDuplicateRecord.Add(new Course
                                 {
-                                    CourseId = c.CourseId,
-                                    CourseName = c.CourseName,
+                                    id = c.CourseId,
+                                    name = c.CourseName,
                                 });
                             }
                         });

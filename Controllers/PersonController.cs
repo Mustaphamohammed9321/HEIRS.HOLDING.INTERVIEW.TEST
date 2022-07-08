@@ -33,8 +33,8 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                 {
                     using (var ctx = new heirs_dbEntities())
                     {
-
                         int countDuplicate = 0;
+                        int countEntryWithoutGrade = 0;
                         List<Person> noDuplicateRecord = new List<Person>();
                         createPerson.Persons.ForEach(c =>
                         {
@@ -51,22 +51,27 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                                     PersonId = c.PersonId,
                                     CourseId = c.CourseId,
                                     Name = c.Name,
-                                    Score = c.Score
+                                    grade = c.Grade == 0.00 ? countEntryWithoutGrade += 1 : c.Grade
                                 });
                             }
                         });
 
-                        if (noDuplicateRecord != null && noDuplicateRecord.Count() > 0)
+                        if (countEntryWithoutGrade > 0)
                         {
-                            //then add the list to db
-                            ctx.People.AddRange(noDuplicateRecord);
-                            await ctx.SaveChangesAsync();
+                            return BadRequest("Please provide grade for all students");
                         }
-
-                        if (countDuplicate > 0)
-                            return Ok(new { responseMessage = $"{createPerson.Persons.Count() - countDuplicate} record(s) added successfully, Reason: We found {countDuplicate} duplicates, and they were ommited while creating new entries.", responseCode = "90" });
-                        return Ok(new { responseMessage = $"{createPerson.Persons.Count()} record(s) created successfully.", responseCode = "00" });
-
+                        else
+                        {
+                            if (noDuplicateRecord != null && noDuplicateRecord.Count() > 0 && countEntryWithoutGrade == 0)
+                            {
+                                //then add the list to db
+                                ctx.People.AddRange(noDuplicateRecord);
+                                await ctx.SaveChangesAsync();                              
+                            }
+                            if (countDuplicate > 0)
+                                return Ok(new { responseMessage = $"{createPerson.Persons.Count() - countDuplicate} record(s) added successfully, Reason: We found {countDuplicate} duplicates, and they were ommited while creating new entries.", responseCode = "90" });
+                            return Ok(new { responseMessage = $"{createPerson.Persons.Count()} record(s) created successfully.", responseCode = "00" });
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -85,7 +90,7 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
         }
 
 
-        [HttpGet, Route()]
+        [HttpGet, Route("GetAllPersons")]
         public async Task<IHttpActionResult> GetAllPersons()
         {
             try
@@ -117,13 +122,13 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                     var newList = new List<GenericPersonResponse>();
 
                     var res = await ctx.People.Where(g => g.PersonId == personId || g.PersonId.ToLower().Equals(personId.ToLower()))
-                        .Join(ctx.Courses, peo => peo.CourseId, cou => cou.CourseId, (peo, cou) => new
+                        .Join(ctx.Courses, peo => peo.CourseId, cou => cou.id, (peo, cou) => new
                         {
                             Name = peo.Name,
-                            CourseDetails = ctx.Courses.Where(v => v.CourseId == peo.CourseId)
-                            .Join(ctx.People.Where(e => e.PersonId == personId), cou1 => cou1.CourseId, peo1 => peo1.CourseId, (cou1, peo1) => new
+                            CourseDetails = ctx.Courses.Where(v => v.id == peo.CourseId)
+                            .Join(ctx.People.Where(e => e.PersonId == personId), cou1 => cou1.id, peo1 => peo1.CourseId, (cou1, peo1) => new
                             {
-                                cou1.CourseName, peo1.CourseId, peo1.Score,
+                                cou1.name, peo1.CourseId, peo1.grade,
                             }).FirstOrDefault(),
                             //GradePointAverage = GenerateGradePointAverage(ctx.People.Where(m => m.PersonId == personId).Select(x => x.Score).ToArray())
                         }).ToListAsync();
@@ -131,8 +136,9 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                     var nList2 = new List<double>();
                     foreach (var item in res)
                     {
-                        nList2.Add((double)item.CourseDetails.Score);
+                        nList2.Add((double)item.CourseDetails.grade);
                     }
+
                     var gpa = (nList2.Sum() / nList2.Count());
 
                     newList.Add(new GenericPersonResponse()
@@ -142,9 +148,6 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
                         ScoreCount = ctx.People.Where(s => s.PersonId == personId).ToList().Count()
                     });
                     return Ok(newList);
-
-
-
                 }
             }
             catch (Exception ex)

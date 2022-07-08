@@ -18,6 +18,6 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.DataContext
         public string PersonId { get; set; }
         public string Name { get; set; }
         public string CourseId { get; set; }
-        public Nullable<double> Score { get; set; }
+        public Nullable<double> grade { get; set; }
     }
 }

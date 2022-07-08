@@ -14,8 +14,8 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.DataContext
     
     public partial class Course
     {
-        public int Id { get; set; }
-        public string CourseId { get; set; }
-        public string CourseName { get; set; }
+        public int Id_pk { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
     }
 }

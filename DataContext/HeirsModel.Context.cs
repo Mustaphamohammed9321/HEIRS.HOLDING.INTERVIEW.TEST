@@ -25,7 +25,7 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.DataContext
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Person> People { get; set; }
     }
 }

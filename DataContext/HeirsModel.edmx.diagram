@@ -5,8 +5,8 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="c1b3181b467b453493fe5d94e078b3f5" Name="Diagram1" >
-        <EntityTypeShape EntityType="heirs_dbModel.Person" Width="1.5" PointX="2.5" PointY="0.75" />
-        <EntityTypeShape EntityType="heirs_dbModel.Course" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="heirs_dbModel.Course" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="heirs_dbModel.Person" Width="1.5" PointX="2.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

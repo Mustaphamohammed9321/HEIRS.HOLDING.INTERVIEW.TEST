@@ -10,7 +10,7 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Models.DTO
         public string PersonId { get; set; }
         public string Name { get; set; }
         public string CourseId { get; set; }
-        public double Score { get; set; }
+        public double Grade { get; set; }
 
     }
 
