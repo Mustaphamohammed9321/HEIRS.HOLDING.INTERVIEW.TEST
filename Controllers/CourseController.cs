@@ -30,6 +30,11 @@ namespace HEIRS.HOLDING.INTERVIEW.TEST.Controllers
 
         }
 
+        List<Course> courses = new List<Course>();  
+        public CourseController(List<Course> courses)
+        {
+            this.courses = courses;
+        }
 
 
         [HttpGet, Route("GetAllCourses")]
